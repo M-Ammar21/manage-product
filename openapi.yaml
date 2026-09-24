@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Library Product API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/auth/register:
+    post:
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password, password_confirmation]
+              properties:
+                username:
+                  type: string
+                  example: jhon_doe
+                password:
+                  type: string
+                  example: supersecret
+                password_confirmation:
+                  type: string
+                  example: supersecret
+      responses:
+        "201":
+          description: User registered
+        "400":
+          description: Validation failed
+  /api/auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: jhon_doe
+                password:
+                  type: string
+                  example: supersecret
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid credentials
+  /api/products:
+    get:
+      summary: List products
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: page
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product list
+    post:
+      summary: Create product
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Product created
+        "400":
+          description: Validation failed
+        "401":
+          description: Unauthenticated
+  /api/products/{id}:
+    get:
+      summary: Product detail
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      responses:
+        "200":
+          description: Product detail
+        "404":
+          description: Product not found
+    put:
+      summary: Update product
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Product updated
+        "400":
+          description: Validation failed
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+    delete:
+      summary: Delete product
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ProductId"
+      responses:
+        "200":
+          description: Product deleted
+        "401":
+          description: Unauthenticated
+        "404":
+          description: Product not found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    ProductId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+  schemas:
+    ProductInput:
+      type: object
+      required: [title, price, category, images]
+      properties:
+        title:
+          type: string
+          example: Awesome T-Shirt
+        price:
+          type: number
+          format: float
+          example: 99.99
+        description:
+          type: string
+          example: High-quality cotton t-shirt
+        category:
+          type: string
+          example: Clothes
+        images:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uri
+          example:
+            - https://placehold.co/640x480
