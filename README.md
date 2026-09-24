@@ -9,8 +9,8 @@ REST API Laravel untuk manajemen produk dan autentikasi user.
 - REST API auth: register dan login.
 - Protected endpoint menggunakan Bearer token.
 - Rate limit:
-  - Auth register/login: maksimal 3 request per 60 detik.
-  - Product create/update/delete: maksimal 1 request per 5 detik.
+    - Auth register/login: maksimal 3 request per 60 detik.
+    - Product create/update/delete: maksimal 1 request per 5 detik.
 - CORS aktif untuk semua origin agar aplikasi web dari berbagai domain dapat mengakses API.
 - Docker support dengan auto migrate dan seed.
 - Dokumentasi API tersedia via OpenAPI/Swagger file `openapi.yaml`.
@@ -116,15 +116,15 @@ curl -X DELETE http://localhost:8000/api/products/1 \
 
 ## Endpoint API
 
-| Method | Endpoint | Auth | Deskripsi |
-| --- | --- | --- | --- |
-| GET | `/api/products` | Tidak | Mengambil semua produk, mendukung filter dan pagination. |
-| GET | `/api/products/{id}` | Tidak | Mengambil detail produk. |
-| POST | `/api/products` | Ya | Membuat produk baru. |
-| PUT | `/api/products/{id}` | Ya | Mengubah produk. |
-| DELETE | `/api/products/{id}` | Ya | Menghapus produk. |
-| POST | `/api/auth/register` | Tidak | Register user baru. |
-| POST | `/api/auth/login` | Tidak | Login dan mendapatkan token. |
+| Method | Endpoint             | Auth  | Deskripsi                                                |
+| ------ | -------------------- | ----- | -------------------------------------------------------- |
+| GET    | `/api/products`      | Tidak | Mengambil semua produk, mendukung filter dan pagination. |
+| GET    | `/api/products/{id}` | Tidak | Mengambil detail produk.                                 |
+| POST   | `/api/products`      | Ya    | Membuat produk baru.                                     |
+| PUT    | `/api/products/{id}` | Ya    | Mengubah produk.                                         |
+| DELETE | `/api/products/{id}` | Ya    | Menghapus produk.                                        |
+| POST   | `/api/auth/register` | Tidak | Register user baru.                                      |
+| POST   | `/api/auth/login`    | Tidak | Login dan mendapatkan token.                             |
 
 ## CORS
 
@@ -174,13 +174,3 @@ Untuk macOS/Linux, gunakan:
 ```bash
 rm database/database.sqlite
 ```
-
-## URL Public Remote Repository
-
-Isi URL repository publik setelah project di-push ke GitHub/GitLab/Bitbucket:
-
-```text
-https://github.com/username/library-api
-```
-
-Catatan: folder project saat ini belum terdeteksi sebagai Git repository, jadi URL remote publik belum tersedia dari environment lokal ini.
