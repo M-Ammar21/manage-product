@@ -151,14 +151,6 @@ Cara menggunakan:
 - Swagger Editor: buka https://editor.swagger.io lalu import file `openapi.yaml`.
 - Postman: pilih `Import` lalu masukkan file `openapi.yaml`.
 
-## Testing
-
-Jalankan test suite:
-
-```bash
-php artisan test --compact
-```
-
 ## Reset Database Docker
 
 Jika ingin mengulang database dari awal:
