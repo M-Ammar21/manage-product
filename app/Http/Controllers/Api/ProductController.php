@@ -9,12 +9,11 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $products = Cache::remember(
             'products:index:v'.$this->productCacheVersion().':'.sha1($request->fullUrl()),
@@ -30,18 +29,18 @@ class ProductController extends Controller
                     })
                     ->latest();
 
-                if ($request->filled('limit')) {
-                    return $query->paginate(
+                $products = $request->filled('limit')
+                    ? $query->paginate(
                         perPage: max(1, min((int) $request->query('limit', 10), 100)),
                         page: max(1, (int) $request->query('page', 1))
-                    );
-                }
+                    )
+                    : $query->get();
 
-                return $query->get();
+                return ProductResource::collection($products)->response()->getData(true);
             }
         );
 
-        return ProductResource::collection($products);
+        return response()->json($products);
     }
 
     public function store(StoreProductRequest $request): JsonResponse
@@ -58,12 +57,20 @@ class ProductController extends Controller
         return (new ProductResource($product))->response()->setStatusCode(201);
     }
 
-    public function show(int $id): ProductResource|JsonResponse
+    public function show(int $id): JsonResponse
     {
         $product = Cache::remember(
             'products:show:v'.$this->productCacheVersion().':'.$id,
             now()->addMinutes(5),
-            fn (): ?Product => Product::with(['creator', 'updater'])->find($id)
+            function () use ($id): ?array {
+                $product = Product::with(['creator', 'updater'])->find($id);
+
+                if (! $product) {
+                    return null;
+                }
+
+                return (new ProductResource($product))->response()->getData(true);
+            }
         );
 
         if (! $product) {
@@ -72,7 +79,7 @@ class ProductController extends Controller
             ], 404);
         }
 
-        return new ProductResource($product);
+        return response()->json($product);
     }
 
     public function update(UpdateProductRequest $request, int $id): ProductResource|JsonResponse
